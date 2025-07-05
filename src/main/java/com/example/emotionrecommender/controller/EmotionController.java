@@ -3,7 +3,7 @@ package com.example.emotionrecommender.controller;
 import com.example.emotionrecommender.dto.EmotionResponse;
 import com.example.emotionrecommender.dto.SongResponse;
 import com.example.emotionrecommender.exception.CustomException;
-import com.example.emotionrecommender.service.ClarifaiService;
+import com.example.emotionrecommender.service.PythonEmotionService;
 import com.example.emotionrecommender.service.SpotifyService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +16,11 @@ import java.util.List;
 @RequestMapping("/api/emotion")
 public class EmotionController {
 
-    private final ClarifaiService clarifaiService;
+    private final PythonEmotionService pythonEmotionService;
     private final SpotifyService spotifyService;
 
-    public EmotionController(ClarifaiService clarifaiService, SpotifyService spotifyService) {
-        this.clarifaiService = clarifaiService;
+    public EmotionController(PythonEmotionService pythonEmotionService, SpotifyService spotifyService) {
+        this.pythonEmotionService = pythonEmotionService;
         this.spotifyService = spotifyService;
     }
 
@@ -34,7 +34,8 @@ public class EmotionController {
         try {
             if (image != null && !image.isEmpty()) {
                 byte[] imageBytes = image.getBytes();
-                emotion = clarifaiService.detectEmotion(imageBytes);
+                // Call Python service instead of Clarifai
+                emotion = pythonEmotionService.detectEmotionFromImage(imageBytes);
             } else if (text != null && !text.isBlank()) {
                 emotion = text.trim().toLowerCase();
             } else {
